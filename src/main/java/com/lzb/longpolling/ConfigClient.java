@@ -100,19 +100,19 @@ public class ConfigClient implements Runnable {
     }
 
     public static void main(String[] args)  {
-        ThreadPoolExecutor liaowei = new MyThreadPoolExecutor("busy");
-        ThreadPoolExecutor dudu = new MyThreadPoolExecutor("empty");
+        ThreadPoolExecutor busy = new MyThreadPoolExecutor("busy");
+        ThreadPoolExecutor empty = new MyThreadPoolExecutor("empty");
         ThreadPoolExecutor main = new MyThreadPoolExecutor("listenMain", 4, 4);
         //3、对threadPoolName进行配置监听
         main.execute(() -> {
             ConfigClient configClient = new ConfigClient();
-            configClient.longPolling("http://127.0.0.1:8080/listener", "liaowei");
+            configClient.longPolling("http://127.0.0.1:8080/listener", "busy");
         });
 
 
         main.execute(() -> {
             ConfigClient configClient = new ConfigClient();
-            configClient.longPolling("http://127.0.0.1:8080/listener", "dudu");
+            configClient.longPolling("http://127.0.0.1:8080/listener", "empty");
         });
 
         main.execute(() -> {
@@ -128,7 +128,7 @@ public class ConfigClient implements Runnable {
         logger.setAdditive(false);
 
         ConfigClient configClient = new ConfigClient();
-        configClient.setShouldTestThreadPoolExecutor(liaowei);
+        configClient.setShouldTestThreadPoolExecutor(busy);
         new Thread(configClient).start();
 
 
